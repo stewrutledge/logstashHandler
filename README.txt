@@ -10,7 +10,7 @@ Basic usage
 
 Setup an input on the relevant logstash server::
 
-  input { 
+  input {
     udp {
       port => 12345
       codec => json
