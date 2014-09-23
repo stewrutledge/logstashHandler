@@ -22,9 +22,19 @@ class handler(logging.Handler):
             raise ValueError('Must specify a port')
         self.facility = kw.get('facility', None)
         self.fromHost = kw.get('fromHost', getfqdn())
+        self.levelsDict = kw.get('levels', None)
+        self.levelLabel = kw.get('levelLabel', 'level')
         logging.Handler.__init__(self)
 
+    def transformLevels(self, level):
+        if self.levelsDict and isinstance(self.levelsDict, dict):
+            level = self.levelsDict.get(level, level)
+            return(level)
+        else:
+            raise TypeError('Levels must be a dictionary')
+
     def emit(self, record, **kwargs):
+        levelLabel = self.levelLabel
         if self.proto == 'UDP':
             self.sock = socket(AF_INET, SOCK_DGRAM)
         if self.proto == 'TCP':
@@ -34,7 +44,7 @@ class handler(logging.Handler):
         msgDict = {}
         msgDict['version'] = '1'
         msgDict['timestamp'] = recordDict['created']
-        msgDict['level'] = recordDict['levelname']
+        msgDict[levelLabel] = self.transformLevels(recordDict['levelname'])
         msgDict['message'] = recordDict['msg']
         msgDict['host'] = self.fromHost
         if self.fullInfo is True:
