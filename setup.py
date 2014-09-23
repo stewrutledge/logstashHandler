@@ -1,3 +1,6 @@
+from distutils.core import setup
+
+
 setup(
     name='logstashHandler',
     version='0.1.0',
