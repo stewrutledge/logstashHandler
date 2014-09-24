@@ -42,8 +42,8 @@ class handler(logging.Handler):
             self.sock.connect((self.host, int(self.port)))
         recordDict = record.__dict__
         msgDict = {}
-        msgDict['version'] = '1'
-        msgDict['timestamp'] = recordDict['created']
+        msgDict['@version'] = '1'
+        msgDict['@timestamp'] = recordDict['created']
         if self.levelsDict:
             msgDict[levelLabel] = self.transformLevels(recordDict['levelname'])
         if not self.levelsDict:
