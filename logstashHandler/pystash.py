@@ -27,10 +27,10 @@ class handler(logging.Handler):
         logging.Handler.__init__(self)
 
     def transformLevels(self, level):
-        if self.levelsDict and isinstance(self.levelsDict, dict):
+        if isinstance(self.levelsDict, dict):
             level = self.levelsDict.get(level, level)
             return(level)
-        else:
+        elif not isinstance(self.levelsDict, dict):
             raise TypeError('Levels must be a dictionary')
 
     def emit(self, record, **kwargs):
@@ -44,7 +44,10 @@ class handler(logging.Handler):
         msgDict = {}
         msgDict['version'] = '1'
         msgDict['timestamp'] = recordDict['created']
-        msgDict[levelLabel] = self.transformLevels(recordDict['levelname'])
+        if self.levelsDict:
+            msgDict[levelLabel] = self.transformLevels(recordDict['levelname'])
+        if not self.levelsDict:
+            msgDict[levelLabel] = recordDict['levelname']
         msgDict['message'] = recordDict['msg']
         msgDict['host'] = self.fromHost
         if self.fullInfo is True:
