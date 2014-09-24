@@ -7,6 +7,7 @@ License: BSD I guess
 import logging
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, getfqdn
 from json import dumps
+from datetime import datetime as dt
 
 
 class handler(logging.Handler):
@@ -43,7 +44,9 @@ class handler(logging.Handler):
         recordDict = record.__dict__
         msgDict = {}
         msgDict['@version'] = '1'
-        msgDict['@timestamp'] = recordDict['created']
+        timeStamp = recordDict['created']
+        ISOtime = dt.fromtimestamp(timeStamp).strftime("%Y-%m-%dT%H:%M:%S.%f")
+        msgDict['@timestamp'] = ISOtime
         if self.levelsDict:
             msgDict[levelLabel] = self.transformLevels(recordDict['levelname'])
         if not self.levelsDict:
